@@ -1,0 +1,55 @@
+import matplotlib.pyplot as plt
+H = [] #키
+W = [] #몸무게
+
+with open("data_4g.csv") as f:
+    for line in f: # iteration 한 번 돌 때마다 read line을 불러줌
+        [i, height, weight] = line.strip().split(",")
+        height = 2.54*float(height)
+        weight = 0.453 * float(weight)
+        print("%.2f" % height,"%.2f" % weight) #소수점 둘째자리까지만 출력
+        H.append(height)
+        W.append(weight)
+
+# plt.plot(H,W,linestyle="none",marker="o") #라인스타일과 마커 지정
+# plt.show()
+
+BoxLeft = min(H) #배열에서 최대값 최소값은 이런식으로 불러오면 됨
+BoxRight = max(H)
+BoxBottom = min(W)
+BoxTop = max(W)
+
+plt.plot(H, W, linestyle="None", marker="o")
+plt.axhline(y=BoxTop) #axh= horizental line
+plt.axhline(y=BoxBottom)
+plt.axvline(x=BoxLeft)
+plt.axvline(x=BoxRight)
+plt.show(block=False)
+
+BHStep = (BoxRight - BoxLeft) / 10 #사각형을 10등분
+BVStep = (BoxTop - BoxBottom) / 10 #Horizental step, Vertical step
+
+GunPosX = [] #GunPosition
+GunPosY = []
+
+#Bottom
+r = range(int(BoxLeft),int(BoxRight+1),int(BHStep)) #range함수 : 최소값 최대값 스텝을 지정해주면 최소값부터 최대값까지 범위를 스텝으로 쪼개줌
+GunPosX.extend(r)
+GunPosY.extend([BoxBottom]*len(r))
+#Right
+r = range(int(BoxBottom),int(BoxTop+1),int(BVStep)) #range함수 : 최소값 최대값 스텝을 지정해주면 최소값부터 최대값까지 범위를 스텝으로 쪼개줌
+GunPosX.extend([BoxRight]*len(r))
+GunPosY.extend(r)
+#Top
+r = range(int(BoxRight),int(BoxLeft)-1,-int(BHStep)) #range함수 : 최소값 최대값 스텝을 지정해주면 최소값부터 최대값까지 범위를 스텝으로 쪼개줌
+GunPosX.extend(r)
+GunPosY.extend([BoxTop]*len(r))
+#Left
+r = range(int(BoxTop),int(BoxBottom)-1,-int(BHStep)) #range함수 : 최소값 최대값 스텝을 지정해주면 최소값부터 최대값까지 범위를 스텝으로 쪼개줌
+GunPosX.extend([BoxLeft]*len(r))
+GunPosY.extend(r)
+
+plt.plot(GunPosX, GunPosY, linestyle="None",marker="D",markersize=2,color="red")
+plt.show()
+
+
