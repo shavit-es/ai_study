@@ -61,6 +61,7 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
+%forwardpropagation
 a01=ones(size(X,1),1);
 a1=[a01 X];
 z2=Theta1*a1';
@@ -78,24 +79,31 @@ for i=1:size(a3,2)
 end
 Theta1sum=sum(sum(Theta1(:,2:end).^2));
 Theta2sum=sum(sum(Theta2(:,2:end).^2));
+%regularization
 regulpart=(lambda*(Theta1sum+Theta2sum))/(2*m);
 J=sum(J)/m+regulpart;
 
+%backpropagation
+delta3=[];
+for t=1:m
+  yt=zeros(size(a3,1),1);
+  tt=y(t);
+  yt(tt)=1;
+  h=a3(:,t);
+  delta3=[delta3 h-yt];
+end
+delta2=Theta2(:,2:end)'*delta3.*sigmoidGradient(z2);
+%unregularized
+%Theta2_grad=delta3*(a2)'/m;
+%Theta1_grad=delta2*a1/m;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+%regularized
+Theta2regularizedpart=lambda*Theta2/m;
+Theta2regularizedpart(:,1)=0;
+Theta1regularizedpart=lambda*Theta1/m;
+Theta1regularizedpart(:,1)=0;
+Theta2_grad=delta3*(a2)'/m +Theta2regularizedpart;
+Theta1_grad=delta2*a1/m + Theta1regularizedpart;
 % -------------------------------------------------------------
 
 % =========================================================================
